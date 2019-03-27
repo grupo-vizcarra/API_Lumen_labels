@@ -68,5 +68,6 @@ class PrinterController extends BaseController{
             $printer->cut();
             $printer->close();
         }
+        return response("Ok", 200);
     }
 }
