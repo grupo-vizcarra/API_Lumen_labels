@@ -17,6 +17,10 @@ class PrinterController extends BaseController{
     }
     public function printTickets(Request $request){
         $impresora = $request->printer;
+        $tickets = $request->tickets;
+        if(sizeof($tickets)<1){
+            return response("No hay tikets por imprimir", 402);
+        }
         $host= gethostname();
         $ipserver = gethostbyname($host);
         $connector = new WindowsPrintConnector("smb://".$ipserver."/".$impresora);
@@ -24,8 +28,6 @@ class PrinterController extends BaseController{
         $printer -> setJustification(Printer::JUSTIFY_CENTER);
         $printer -> selectPrintMode(Printer::MODE_FONT_B);
         $printer->setEmphasis(true);
-
-        $tickets = $request->tickets;
 
         foreach($tickets as $ticket){
             $printer->setTextSize(8,8);
