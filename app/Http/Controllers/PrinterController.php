@@ -19,7 +19,7 @@ class PrinterController extends BaseController{
         $impresora = $request->printer;
         $tickets = $request->tickets;
         if(sizeof($tickets)<1){
-            return response("No hay tikets por imprimir", 402);
+            return response("No hay tickets por imprimir", 402);
         }
         $host= gethostname();
         $ipserver = gethostbyname($host);

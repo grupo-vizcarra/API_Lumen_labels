@@ -10,8 +10,10 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 class ProductController extends BaseController{
     public function precios(Request $request){
         if($request->has(['product', 'price_id'])){
-            if(count($request->price_id)<2){
-                return response("Debe seleccionar al menos 2 precios", 406);
+            if($request->isPrice){
+                if(count($request->price_id)<2){
+                    return response("Debe seleccionar al menos 2 precios", 406);
+                }
             }
             $arreglo= explode('+', $request->product);
             $clave = $arreglo[0];
