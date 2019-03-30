@@ -64,7 +64,7 @@ class ProductController extends BaseController{
             $type = $this->type($menudeo, $mayoreo, $media);
             if($type=='off'){
                 $precios = array();
-                array_push($precios, array("idlist" => null, "labprint" => "OFERTA", "price" => $menudeo));
+                array_push($precios, array("idlist" => null, "labprint" => "OFERTA", "price" => "$ ".$menudeo));
                 return response()->json([
                     'type' => $type,
                     "tool" => $extencion,
@@ -75,7 +75,7 @@ class ProductController extends BaseController{
                 ]);
             }else if($type=='my'){
                 $precios = array();
-                array_push($precios, array("idlist" => null, "labprint" => "MAYOREO", "price" => $mayoreo));
+                array_push($precios, array("idlist" => null, "labprint" => "MAYOREO", "price" => "$ ".$mayoreo));
                 return response()->json([
                     'type' => $type,
                     "tool" => $extencion,
@@ -88,13 +88,13 @@ class ProductController extends BaseController{
                 $precios = array();
                 foreach ($request->price_id as $price) {
                     if($price==1){
-                        array_push($precios, array("idlist" => 1, "labprint" => "MAY", "price" => $mayoreo));
+                        array_push($precios, array("idlist" => 1, "labprint" => "MAY", "price" => "$ ".$mayoreo));
                     }else if($price==2){
-                        array_push($precios, array("idlist" => 2, "labprint" => "MEN", "price" => $menudeo));
+                        array_push($precios, array("idlist" => 2, "labprint" => "MEN", "price" => "$ ".$menudeo));
                     }else if($price==3){
-                        array_push($precios, array("idlist" => 3, "labprint" => "DOC", "price" => $media));
+                        array_push($precios, array("idlist" => 3, "labprint" => "DOC", "price" => "$ ".$media));
                     }else if($price==4){
-                        array_push($precios, array("idlist" => 4, "labprint" => "CJA", "price" => $caja));
+                        array_push($precios, array("idlist" => 4, "labprint" => "CJA", "price" => "$ ".$caja));
                     }
                 }
                 return response()->json([
