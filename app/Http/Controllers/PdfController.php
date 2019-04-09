@@ -95,7 +95,7 @@ class PdfController extends Controller{
             }
             $pz = '';
             if($isPack){
-                $pz.= ' | '.$std[$i]['ipack'];
+                $pz.= ' | '.$std[$i]['ipack'].' pz';
             }
             //$totalPages +=1;
             if($i%8==0 && $i!=0){
@@ -238,7 +238,7 @@ class PdfController extends Controller{
 
         //  columnas         //filas (por hoja)    //max celdas (por hoja)
         $maxcellperrow=2;    $maxrowsperpage=4;    $maxcellsperpage=$maxcellperrow*$maxrowsperpage;
-        $totalwidth=186;
+        $totalwidth=220;
         $totalPages=1;
         $cellONrow=1;// celdas en fila
         $rowOnPage=1;// celdas en tabla
@@ -247,8 +247,8 @@ class PdfController extends Controller{
         $movetop=18;// distancia en eje "Y" de la cestrella
         $moveleft=10; // distancia en eje "X" de la estrella
         $wcll=$totalwidth/$maxcellperrow; // ancho de la celda
-        $hcll=30; //alto de la celda
-        $border=1; //borde las celdas
+        $hcll=27; //alto de la celda
+        $border=0; //borde las celdas
         PDF::AddPage();
         PDF::setCellPaddings(7,5,7,5);
         //$headerpage='<div style="color:#00ba34;font-size:24px;">Hoja VERDE ('.$totalPages.')</div>';
@@ -259,12 +259,18 @@ class PdfController extends Controller{
                 $moveleft+=0;
             }else if($i%2==1){
                 $moveleft+=100;
+                $cuadro = '<hr style="border-top: dotted 1px;">';
+                PDF::writeHTMLCell(235, 1, -10, $movetop+$hcll-5, $cuadro, $border, 0, 0, true, 'C',true);
             }else{
                 $moveleft-=100;
-                $movetop+=50;
+                $movetop+=35;
             }
             //$totalPages +=1;
-            if($i%10==0 && $i!=0){
+            if($i%14==1){
+                $cuadro = '<div style="border-left: 1px dashed black;"></div>';
+                PDF::writeHTMLCell(.01, 250, $moveleft, 10, $cuadro, 1, 0, 0, true, 'C',true);
+            }
+            if($i%14==0 && $i!=0){
                 $cellONrow=1;// celdas en fila
                 $rowOnPage=1;// celdas en tabla
                 $cellOnDoc=1;// celdas totales del documento
@@ -273,7 +279,7 @@ class PdfController extends Controller{
                 $moveleft=10; // distancia en eje "X" de la estrella
                 $wcll=$totalwidth/$maxcellperrow; // ancho de la celda
                 $hcll=30; //alto de la celda
-                $border=1; //borde las celdas
+                $border=0; //borde las celdas
                 PDF::AddPage();
                 PDF::setCellPaddings(7,5,7,5);
                 //$headerpage='<div style="color:#00ba34;font-size:24px;">Hoja VERDE ('.$totalPages.')</div>';
@@ -284,12 +290,12 @@ class PdfController extends Controller{
             if($isPack){
                 $pz.= ' | '.$tickets[$i]['ipack'] . ' pz';
             }
-            $cuadro = '<div style="text-align: center; font-size: 40px; display: inline-block; font-weight: bold;">'.$tickets[$i]['item'].'<br><span style="font-size:30px; text-align: center;">'.$tickets[$i]['scode'].$pz.'</span></div>';
+            $cuadro = '<div style="text-align: center; font-size: 40px; display: inline-block; font-weight: bold;">'.$tickets[$i]['item'].'<br><span style="font-size:25px; text-align: center;">'.$tickets[$i]['scode'].$pz.'</span></div>';
             PDF::writeHTMLCell($wcll, $hcll, $moveleft, $movetop-8, $cuadro, $border, 0, 0, true, 'C',true);
         }
         $nameFile = time().'.pdf';
     PDF::Output(__DIR__.'/../../../files/'.$nameFile, 'F');
-    return response()->json(["archivo" => $nameFile, "hojas" => ceil(count($tickets)/10) ]);
+    return response()->json(["archivo" => $nameFile, "hojas" => ceil(count($tickets)/14) ]);
 }
 
 }
