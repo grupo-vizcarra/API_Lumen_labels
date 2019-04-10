@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 use App\Product;
 use App\ProductAux;
 use Illuminate\Http\Request;
+use App\PriceList;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 
 class ProductController extends BaseController{
+    public function priceList(){
+        return response()->json(PriceList::all());
+    }
     public function precios(Request $request){
         if($request->has(['product', 'price_id'])){
             if($request->isPrice){
@@ -45,15 +49,17 @@ class ProductController extends BaseController{
                 $product = Product::find($clave);
         }
         $i=0;
+        $priceList = $this->priceList();
+        //return response()->json($priceList->original);
             foreach ($product->prices as $price) {
                 if(strcmp($clave, "".$price->pivot->pp_item) != 0){
                     unset($product->prices[$i]);
                 }else{
-                    if($price->lp_desc == "MEN"){
+                    if($price->lp_desc == $priceList->original[0]->lp_desc){
                         $menudeo = $price->pivot->pp_price+$precio_adicional;
-                    }else if($price->lp_desc == "MAY"){
+                    }else if($price->lp_desc == $priceList->original[1]->lp_desc){
                         $mayoreo = $price->pivot->pp_price+$precio_adicional;
-                    }else if($price->lp_desc =="MED"){
+                    }else if($price->lp_desc ==$priceList->original[2]->lp_desc){
                         $media = $price->pivot->pp_price+$precio_adicional;
                     }else{
                         $caja = $price->pivot->pp_price+$precio_adicional;
@@ -62,50 +68,32 @@ class ProductController extends BaseController{
                 $i++;
             }
             $type = $this->type($menudeo, $mayoreo, $media);
+            $precios = array();
             if($type=='off'){
-                $precios = array();
                 array_push($precios, array("idlist" => null, "labprint" => "OFERTA", "price" => "$ ".$menudeo));
-                return response()->json([
-                    'type' => $type,
-                    "tool" => $extencion,
-                    "item" => $product->pro_code,
-                    "scode" => $product->pro_shortcode,
-                    "ipack" => $product->pro_innerpack,
-                    "prices" =>$precios
-                ]);
             }else if($type=='my'){
-                $precios = array();
                 array_push($precios, array("idlist" => null, "labprint" => "MAYOREO", "price" => "$ ".$mayoreo));
-                return response()->json([
-                    'type' => $type,
-                    "tool" => $extencion,
-                    "item" => $product->pro_code,
-                    "scode" => $product->pro_shortcode,
-                    "ipack" => $product->pro_innerpack,
-                    "prices" => $precios
-                ]);
             }else{
-                $precios = array();
                 foreach ($request->price_id as $price) {
-                    if($price==1){
-                        array_push($precios, array("idlist" => 1, "labprint" => "MAY", "price" => "$ ".$mayoreo));
-                    }else if($price==2){
-                        array_push($precios, array("idlist" => 2, "labprint" => "MEN", "price" => "$ ".$menudeo));
-                    }else if($price==3){
-                        array_push($precios, array("idlist" => 3, "labprint" => "DOC", "price" => "$ ".$media));
-                    }else if($price==4){
-                        array_push($precios, array("idlist" => 4, "labprint" => "CJA", "price" => "$ ".$caja));
+                    if($price==$priceList->original[0]->lp_id){
+                        array_push($precios, array("idlist" => $priceList->original[0]->lp_id, "labprint" => $priceList->original[0]->lp_desc, "price" => "$ ".$mayoreo));
+                    }else if($price==$priceList->original[1]->lp_id){
+                        array_push($precios, array("idlist" => $priceList->original[1]->lp_id, "labprint" => $priceList->original[1]->lp_desc, "price" => "$ ".$menudeo));
+                    }else if($price==$priceList->original[2]->lp_id){
+                        array_push($precios, array("idlist" => $priceList->original[2]->lp_id, "labprint" => $priceList->original[2]->lp_desc, "price" => "$ ".$media));
+                    }else if($price==$priceList->original[3]->lp_id){
+                        array_push($precios, array("idlist" => $priceList->original[3]->lp_id, "labprint" => $priceList->original[3]->lp_desc, "price" => "$ ".$caja));
                     }
                 }
-                return response()->json([
-                    'type' => $type,
-                    "tool" => $extencion,
-                    "item" => $product->pro_code,
-                    "scode" => $product->pro_shortcode,
-                    "ipack" => $product->pro_innerpack,
-                    "prices" =>$precios
-                ]);
             }
+            return response()->json([
+                'type' => $type,
+                "tool" => $extencion,
+                "item" => $product->pro_code,
+                "scode" => $product->pro_shortcode,
+                "ipack" => $product->pro_innerpack,
+                "prices" =>$precios
+            ]);
         }
     }
 
