@@ -266,9 +266,16 @@ class PdfController extends Controller{
                 $movetop+=35;
             }
             //$totalPages +=1;
-            if($i%14==1){
+            if($i==0){
                 $cuadro = '<div style="border-left: 1px dashed black;"></div>';
-                PDF::writeHTMLCell(.01, 250, $moveleft, 10, $cuadro, 1, 0, 0, true, 'C',true);
+                PDF::writeHTMLCell(.01, 250, $moveleft+100, 10, $cuadro, 1, 0, 0, true, 'C',true);
+                $cuadro = '<hr style="border-top: dotted 1px;">';
+                PDF::writeHTMLCell(235, 1, -10, $movetop+$hcll-5, $cuadro, $border, 0, 0, true, 'C',true);
+            }else{
+                if($i%14==1){
+                    $cuadro = '<div style="border-left: 1px dashed black;"></div>';
+                    PDF::writeHTMLCell(.01, 250, $moveleft, 10, $cuadro, 1, 0, 0, true, 'C',true);
+                }
             }
             if($i%14==0 && $i!=0){
                 $cellONrow=1;// celdas en fila
