@@ -1,13 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 use App\Product;
 use App\ProductAux;
 use Illuminate\Http\Request;
 use App\PriceList;
-
 use Laravel\Lumen\Routing\Controller as BaseController;
-
 class ProductController extends BaseController{
     public function priceList(){
         return response()->json(PriceList::all());
@@ -20,7 +17,7 @@ class ProductController extends BaseController{
                 }
             }
             $arreglo= explode('+', $request->product);
-            $clave = $arreglo[0];
+            $clave = strtoupper($arreglo[0]);//linea modificada por lalo
             if(count($arreglo)==2){
                 $extencion = strtoupper($arreglo[1]);
             }else{
@@ -76,9 +73,9 @@ class ProductController extends BaseController{
             }else{
                 foreach ($request->price_id as $price) {
                     if($price==$priceList->original[0]->lp_id){
-                        array_push($precios, array("idlist" => $priceList->original[0]->lp_id, "labprint" => $priceList->original[0]->lp_desc, "price" => "$ ".$mayoreo));
+                        array_push($precios, array("idlist" => $priceList->original[0]->lp_id, "labprint" => $priceList->original[0]->lp_desc, "price" => "$ ".$menudeo));//linea modificada por lalo
                     }else if($price==$priceList->original[1]->lp_id){
-                        array_push($precios, array("idlist" => $priceList->original[1]->lp_id, "labprint" => $priceList->original[1]->lp_desc, "price" => "$ ".$menudeo));
+                        array_push($precios, array("idlist" => $priceList->original[1]->lp_id, "labprint" => $priceList->original[1]->lp_desc, "price" => "$ ".$mayoreo));//linea modificada por lalo
                     }else if($price==$priceList->original[2]->lp_id){
                         array_push($precios, array("idlist" => $priceList->original[2]->lp_id, "labprint" => $priceList->original[2]->lp_desc, "price" => "$ ".$media));
                     }else if($price==$priceList->original[3]->lp_id){
@@ -92,11 +89,11 @@ class ProductController extends BaseController{
                 "item" => $product->pro_code,
                 "scode" => $product->pro_shortcode,
                 "ipack" => $product->pro_innerpack,
+                "sdesc" => $product->pro_shortdesc,//linea agregada por lalo
                 "prices" =>$precios
             ]);
         }
     }
-
     public function claves(){
         $claves = array(
             array("clave"=>"C", "precio"=>120),

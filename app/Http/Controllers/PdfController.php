@@ -115,9 +115,11 @@ class PdfController extends Controller{
                 $mask = PDF::Image(__DIR__.'./resources/img/STAR12.png', 0, 0, 0, '', '', '', '', false, 700, '', true);
                 PDF::setCellPaddings(5,5,5,5);
             }
+            $tool_string = ($std[$i]['tool'] ? "+".$std[$i]['tool'] : "");
+            $font_size = ($tool_string ? 35: 50);
                 $maindts='<table border="0">
 							<tr>
-								<td style="font-size:50px;"><b>'.$std[$i]['scode'].'</b></td>
+								<td style="font-size:'.$font_size.'px;"><b>'.$std[$i]['scode'].$tool_string.'</b></td>
 							</tr>
 							<tr>
 								<td style="font-size:15px;"><b>'.$std[$i]['item'].$pz.'</b></td>
@@ -183,9 +185,11 @@ class PdfController extends Controller{
                     $mask = PDF::Image(__DIR__.'./resources/img/STAR12.png', 0, 0, 0, '', '', '', '', false, 700, '', true);
                     PDF::setCellPaddings(5,5,5,5);
                 }
+                $tool_string = ($off[$i]['tool'] ? "+".$off[$i]['tool'] : "");
+                $font_size = ($tool_string ? 35: 50);
                     $maindts='<table border="0">
                                 <tr>
-                                    <td style="font-size:50px;"><b>'.$off[$i]['scode'].'</b></td>
+                                    <td style="'.$font_size.'px"><b>'.$off[$i]['scode'].$tool_string.'</b></td>
                                 </tr>
                                 <tr>
                                     <td style="font-size:15px;"><b>'.$off[$i]['item'].$pz.'</b></td>
