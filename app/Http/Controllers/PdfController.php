@@ -61,7 +61,7 @@ class PdfController extends Controller{
         $flprice=10;// tamaño de nombre de precio para todos
         $fitem=28; // tamaño de fuente del item para lapicera
         $fscode=20;// tamaño de fuente del coigo corto
-        $fprice=25;// tamaño de fuente del precio para lapicera
+        $fprice=35;// tamaño de fuente del precio para lapicera
 
         //  columnas         //filas (por hoja)    //max celdas (por hoja)
         $maxcellperrow=2;    $maxrowsperpage=4;    $maxcellsperpage=$maxcellperrow*$maxrowsperpage;
@@ -116,7 +116,8 @@ class PdfController extends Controller{
                 PDF::setCellPaddings(5,5,5,5);
             }
             $tool_string = ($std[$i]['tool'] ? "+".$std[$i]['tool'] : "");
-            $font_size = ($tool_string ? 35: 50);
+            $font_size = (strlen($tool_string)>0 ? 35: 50);
+            $font_size = (strlen($tool_string)>1 ? 30: 50);
                 $maindts='<table border="0">
 							<tr>
 								<td style="font-size:'.$font_size.'px;"><b>'.$std[$i]['scode'].$tool_string.'</b></td>
@@ -128,11 +129,11 @@ class PdfController extends Controller{
                         $prices_pdf = '';
                 foreach($std[$i]['prices'] as $price){
                     if($price['labprint']=='OFERTA'){
-                        $prices_pdf.= '<b>OFERTA</b><br>
-                        <b style="font-size:'.($fprice+30).'px;">'.($price['price']).'</b>';
+                        $prices_pdf.= '<b style="font-size:'.($fprice).'px;">OFERTA</b><br>
+                        <b style="font-size:'.($fprice+10).'px;">'.($price['price']).'</b>';
                     }else if($price['labprint']=='MAYOREO'){
-                        $prices_pdf.= '<b>MAYOREO</b><br>
-                        <b style="font-size:'.($fprice+30).'px;">'.($price['price']).'</b>';
+                        $prices_pdf.= '<b style="font-size:'.($fprice).'px;">MAYOREO</b><br>
+                        <b style="font-size:'.($fprice+10).'px;">'.($price['price']).'</b>';
                     }else{
                         $prices_pdf.= '<b style="font-size:'.($fprice).'px;">'.($price['labprint']).'</b>
                         <b style="font-size:'.($fprice).'px;">'.($price['price']).'</b><br>';
@@ -186,7 +187,8 @@ class PdfController extends Controller{
                     PDF::setCellPaddings(5,5,5,5);
                 }
                 $tool_string = ($off[$i]['tool'] ? "+".$off[$i]['tool'] : "");
-                $font_size = ($tool_string ? 35: 50);
+                $font_size = (strlen($tool_string)>0 ? 35: 50);
+                $font_size = (strlen($tool_string)>1 ? 30: 50);
                     $maindts='<table border="0">
                                 <tr>
                                     <td style="'.$font_size.'px"><b>'.$off[$i]['scode'].$tool_string.'</b></td>
@@ -198,11 +200,11 @@ class PdfController extends Controller{
                             $prices_pdf = '';
                     foreach($off[$i]['prices'] as $price){
                         if($price['labprint']=='OFERTA'){
-                            $prices_pdf.= '<b>OFERTA</b><br>
-                            <b style="font-size:'.($fprice+30).'px;">'.($price['price']).'</b>';
+                            $prices_pdf.= '<b style="font-size:'.($fprice).'px;">OFERTA</b><br>
+                            <b style="font-size:'.($fprice+10).'px;">'.($price['price']).'</b>';
                         }else if($price['labprint']=='MAYOREO'){
-                            $prices_pdf.= '<b>MAYOREO</b><br>
-                            <b style="font-size:'.($fprice+30).'px;">'.($price['price']).'</b>';
+                            $prices_pdf.= '<b style="font-size:'.($fprice).'px;">MAYOREO</b><br>
+                            <b style="font-size:'.($fprice+10).'px;">'.($price['price']).'</b>';
                         }else{
                             $prices_pdf.= '<b style="font-size:'.($fprice).'px;">'.($price['labprint']).'</b>
                             <b style="font-size:'.($fprice).'px;">'.($price['price']).'</b><br>';
@@ -238,7 +240,7 @@ class PdfController extends Controller{
         $flprice=10;// tamaño de nombre de precio para todos
         $fitem=28; // tamaño de fuente del item para lapicera
         $fscode=20;// tamaño de fuente del coigo corto
-        $fprice=25;// tamaño de fuente del precio para lapicera
+        $fprice=40;// tamaño de fuente del precio para lapicera
 
         //  columnas         //filas (por hoja)    //max celdas (por hoja)
         $maxcellperrow=2;    $maxrowsperpage=4;    $maxcellsperpage=$maxcellperrow*$maxrowsperpage;
