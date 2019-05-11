@@ -100,11 +100,11 @@ class PdfController extends Controller{
                 PDF::setCellPaddings(5,5,5,5);
             }
             $tool_string = ($std[$i]['tool'] ? "+".$std[$i]['tool'] : "");
-            $font_size = '40px';
+            $font_size = '60';
             if(strlen($tool_string)>2){
-                $font_size = '25px';
+                $font_size = '25';
             }else if(strlen($tool_string)>1){
-                $font_size = '29.5px';
+                $font_size = '29.5';
             }
                 $maindts='<table border="0">
 							<tr>
@@ -183,15 +183,15 @@ class PdfController extends Controller{
                     PDF::setCellPaddings(5,5,5,5);
                 }
                 $tool_string = ($off[$i]['tool'] ? "+".$off[$i]['tool'] : "");
-                $font_size = '40px';
+                $font_size = '40';
                 if(strlen($tool_string)>2){
-                    $font_size = '25px';
+                    $font_size = '25';
                 }else if(strlen($tool_string)>1){
-                    $font_size = '29.5px';
+                    $font_size = '29.5';
                 }
                     $maindts='<table border="0">
                                 <tr>
-                                    <td style="'.$font_size.'px"><b>'.$off[$i]['scode'].$tool_string.'</b></td>
+                                    <td style="font-size:'.$font_size.'px;"><b>'.$off[$i]['scode'].$tool_string.'</b></td>
                                 </tr>
                                 <tr>
                                     <td style="font-size:16px;"><b>'.$off[$i]['item'].$pz.'</b></td>
@@ -208,8 +208,8 @@ class PdfController extends Controller{
                             $resta = 2;
                         }
                         if($price['labprint']=='OFERTA'){
-                            $prices_pdf.= '<b style="font-size:'.($fprice-5-$resta).'px;">OFERTA</b><br>
-                            <b style="font-size:'.($fprice+4-$resta).'px;">'.($price['price']).'</b>';
+                            $prices_pdf.= '<b style="font-size:'.($fprice).'px;">OFERTA</b><br>
+                            <b style="font-size:'.($fprice+16).'px;">'.($price['price']).'</b>';
                         }else if($price['labprint']=='MAYOREO'){
                             $prices_pdf.= '<b style="font-size:'.($fprice-5).'px;">MAYOREO</b><br>
                             <b style="font-size:'.($fprice+4).'px;">'.($price['price']).'</b>';
