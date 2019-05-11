@@ -18,22 +18,6 @@ class PdfController extends Controller{
             return $this->pdfBodega($request->tickets, $request->isPack);
         }
     }
-    public function prueba(){
-        return response()->download(__DIR__.'/../../../files/hola.pdf');
-    }
-    public function prueba2(Request $request){
-        $tickets = $request->tickets;
-        $std = [];
-        $off = [];
-        foreach($tickets as $ticket){
-            if($ticket["type"]=="off"){
-                array_push($off, $ticket);
-            }else{
-                array_push($std, $ticket);
-            }
-        }
-        return response()->json(["std"=> $std, "off" => $off]);
-    }
     public function pdfTienda($tickets, $isPack){
         //Se capturan los datos que llegan del front
         //Variables de nuestras distintos tipos de tickets
@@ -61,7 +45,7 @@ class PdfController extends Controller{
         $flprice=10;// tamaño de nombre de precio para todos
         $fitem=28; // tamaño de fuente del item para lapicera
         $fscode=20;// tamaño de fuente del coigo corto
-        $fprice=35;// tamaño de fuente del precio para lapicera
+        $fprice=31;// tamaño de fuente del precio para lapicera
 
         //  columnas         //filas (por hoja)    //max celdas (por hoja)
         $maxcellperrow=2;    $maxrowsperpage=4;    $maxcellsperpage=$maxcellperrow*$maxrowsperpage;
@@ -143,7 +127,7 @@ class PdfController extends Controller{
                         <td>'.$prices_pdf.'
                         </td>
                     </tr></table>';
-                PDF::setCellPaddings(25,15,25,10);
+                PDF::setCellPaddings(25,12.5,25,10);
                 PDF::Image(__DIR__.'./resources/img/STAR12.png', $moveleft, $movetop, $wcll, $hcll, '', '', '', false, 300, '', false, $mask);
                 PDF::writeHTMLCell($wcll, $hcll, $moveleft, $movetop-8, $maindts.$pricings, $border, 0, 0, true, 'C',true);
             }
@@ -214,7 +198,7 @@ class PdfController extends Controller{
                             <td>'.$prices_pdf.'
                             </td>
                         </tr></table>';
-                    PDF::setCellPaddings(25,15,25,10);
+                    PDF::setCellPaddings(25,12.5,25,10);
                     PDF::Image(__DIR__.'./resources/img/STAR12.png', $moveleft, $movetop, $wcll, $hcll, '', '', '', false, 300, '', false, $mask);
                     PDF::writeHTMLCell($wcll, $hcll, $moveleft, $movetop-8, $maindts.$pricings, $border, 0, 0, true, 'C',true);
                 }
