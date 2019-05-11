@@ -111,20 +111,28 @@ class PdfController extends Controller{
 								<td style="font-size:'.$font_size.'px;"><b>'.$std[$i]['scode'].$tool_string.'</b></td>
 							</tr>
 							<tr>
-								<td style="font-size:15px;"><b>'.$std[$i]['item'].$pz.'</b></td>
+								<td style="font-size:16px;"><b>'.$std[$i]['item'].$pz.'</b></td>
 							</tr>
                         </table>';
                         $prices_pdf = '';
                 foreach($std[$i]['prices'] as $price){
+                    $resta = 0;
+                    if(strlen($price['price'])>3){
+                        $resta = 6;
+                    }else if(strlen($price['price'])>3){
+                        $resta = 4;
+                    }else if(strlen($price['price'])>2){
+                        $resta = 2;
+                    }
                     if($price['labprint']=='OFERTA'){
-                        $prices_pdf.= '<b style="font-size:'.($fprice).'px;">OFERTA</b><br>
-                        <b style="font-size:'.($fprice+10).'px;">'.($price['price']).'</b>';
+                        $prices_pdf.= '<b style="font-size:'.($fprice-5-$resta).'px;">OFERTA</b><br>
+                        <b style="font-size:'.($fprice+4-$resta).'px;">'.($price['price']).'</b>';
                     }else if($price['labprint']=='MAYOREO'){
-                        $prices_pdf.= '<b style="font-size:'.($fprice).'px;">MAYOREO</b><br>
-                        <b style="font-size:'.($fprice+10).'px;">'.($price['price']).'</b>';
+                        $prices_pdf.= '<b style="font-size:'.($fprice-5-$resta).'px;">MAYOREO</b><br>
+                        <b style="font-size:'.($fprice+4-$resta).'px;">'.($price['price']).'</b>';
                     }else{
-                        $prices_pdf.= '<b style="font-size:'.($fprice).'px;">'.($price['labprint']).'</b>
-                        <b style="font-size:'.($fprice).'px;">'.($price['price']).'</b><br>';
+                        $prices_pdf.= '<b style="font-size:'.($fprice-$resta).'px;">'.($price['labprint']).'</b>
+                        <b style="font-size:'.($fprice-$resta).'px;">'.($price['price']).'</b><br>';
                     }
                 }
                 $pricings = '<table border="0"><tr>
@@ -186,20 +194,28 @@ class PdfController extends Controller{
                                     <td style="'.$font_size.'px"><b>'.$off[$i]['scode'].$tool_string.'</b></td>
                                 </tr>
                                 <tr>
-                                    <td style="font-size:15px;"><b>'.$off[$i]['item'].$pz.'</b></td>
+                                    <td style="font-size:16px;"><b>'.$off[$i]['item'].$pz.'</b></td>
                                 </tr>
                             </table>';
                             $prices_pdf = '';
                     foreach($off[$i]['prices'] as $price){
+                        $resta = 0;
+                        if(strlen($price['price'])>3){
+                            $resta = 6;
+                        }else if(strlen($price['price'])>3){
+                            $resta = 4;
+                        }else if(strlen($price['price'])>2){
+                            $resta = 2;
+                        }
                         if($price['labprint']=='OFERTA'){
-                            $prices_pdf.= '<b style="font-size:'.($fprice).'px;">OFERTA</b><br>
-                            <b style="font-size:'.($fprice+10).'px;">'.($price['price']).'</b>';
+                            $prices_pdf.= '<b style="font-size:'.($fprice-5-$resta).'px;">OFERTA</b><br>
+                            <b style="font-size:'.($fprice+4-$resta).'px;">'.($price['price']).'</b>';
                         }else if($price['labprint']=='MAYOREO'){
-                            $prices_pdf.= '<b style="font-size:'.($fprice).'px;">MAYOREO</b><br>
-                            <b style="font-size:'.($fprice+10).'px;">'.($price['price']).'</b>';
+                            $prices_pdf.= '<b style="font-size:'.($fprice-5-$resta).'px;">MAYOREO</b><br>
+                            <b style="font-size:'.($fprice+4-$resta).'px;">'.($price['price']).'</b>';
                         }else{
-                            $prices_pdf.= '<b style="font-size:'.($fprice).'px;">'.($price['labprint']).'</b>
-                            <b style="font-size:'.($fprice).'px;">'.($price['price']).'</b><br>';
+                            $prices_pdf.= '<b style="font-size:'.($fprice-$resta).'px;">'.($price['labprint']).'</b>
+                            <b style="font-size:'.($fprice-$resta).'px;">'.($price['price']).'</b><br>';
                         }
                     }
                     $pricings = '<table border="0"><tr>
