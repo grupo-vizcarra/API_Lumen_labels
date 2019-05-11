@@ -100,8 +100,12 @@ class PdfController extends Controller{
                 PDF::setCellPaddings(5,5,5,5);
             }
             $tool_string = ($std[$i]['tool'] ? "+".$std[$i]['tool'] : "");
-            $font_size = (strlen($tool_string)>0 ? 35: 50);
-            $font_size = (strlen($tool_string)>1 ? 30: 50);
+            $font_size = '40px';
+            if(strlen($tool_string)>2){
+                $font_size = '25px';
+            }else if(strlen($tool_string)>1){
+                $font_size = '29.5px';
+            }
                 $maindts='<table border="0">
 							<tr>
 								<td style="font-size:'.$font_size.'px;"><b>'.$std[$i]['scode'].$tool_string.'</b></td>
@@ -171,8 +175,12 @@ class PdfController extends Controller{
                     PDF::setCellPaddings(5,5,5,5);
                 }
                 $tool_string = ($off[$i]['tool'] ? "+".$off[$i]['tool'] : "");
-                $font_size = (strlen($tool_string)>0 ? 35: 50);
-                $font_size = (strlen($tool_string)>1 ? 30: 50);
+                $font_size = '40px';
+                if(strlen($tool_string)>2){
+                    $font_size = '25px';
+                }else if(strlen($tool_string)>1){
+                    $font_size = '29.5px';
+                }
                     $maindts='<table border="0">
                                 <tr>
                                     <td style="'.$font_size.'px"><b>'.$off[$i]['scode'].$tool_string.'</b></td>
