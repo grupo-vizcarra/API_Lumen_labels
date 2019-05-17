@@ -23,8 +23,8 @@ $router->get('/printer', 'PrinterController@getAll');
 
 $router->post('/printer', 'PrinterController@printTickets');
 
-$router->get('/prueba', 'PdfController@prueba');
-
 $router->get('/pdf', 'PdfController@pdfBodega');
 
 $router->post('/pdf', 'PdfController@createPdf');
+
+$router->get('/prueba', 'PruebaPdfController@createPdf');
