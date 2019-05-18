@@ -35,6 +35,10 @@ class PdfController extends Controller{
         $font = 'helvetica';
         
         $std = $this->clasificaTickets($tickets, "std");
+        $my = $this->clasificaTickets($tickets, "my");
+        foreach($my as $item){
+            array_push($std, $item);
+        }
         $off = $this->clasificaTickets($tickets, "off");
         $hojas_off = 0;
         $hojas_std = 0;
@@ -76,8 +80,8 @@ class PdfController extends Controller{
         $height_page = 250;
         $font = 'helvetica';
         $font_size_principal = 3.8;
-        $font_size_secondary = 1.9;
-        $font_size_aux = 1.2;
+        $font_size_secondary = 1.8;
+        $font_size_aux = 1.1;
         for($i=0; $i<(sizeof($tickets))/2; $i++){
             $html ='<table border="0" style="text-align:center;">
             <tr>';
@@ -86,23 +90,46 @@ class PdfController extends Controller{
                 $mult = 1;
                 $precio = '';
                 if((($i*2)-1)+$j<sizeof($tickets)){
+                    $tool = $tickets[(($i*2)-1)+$j]['tool'];
+                    if(strlen($tool)>0){
+                        $font_size_principal = 3.2;
+                        $tool = '+'.$tickets[(($i*2)-1)+$j]['tool'];
+                    }else{
+                        $tool = '';
+                        $font_size_principal = 4;
+                    }
                     $contador = 0;
-                    foreach($tickets[(($i*2)-1)+$j]['prices'] as $price){
-                        $ultimo = sizeof($price);
-                        $contador=$contador+1;
-                        if(sizeof($price)==2){
-                            $mult = 1.2;
-                        }
-                        if($contador == $ultimo){
-                            $precio.= $price['labprint'].'&nbsp;&nbsp;'.$price['price'];
-                        }else{
-                            $precio.= $price['labprint'].'&nbsp;&nbsp;'.$price['price'].'<br>';
+                    $labprice = '';
+                    $ayuda = '';
+                    $x = 0;
+                    if(sizeof($tickets[(($i*2)-1)+$j]['prices'])==1){
+                        $ayuda.= '<span style="font-size: '.$font_size_aux*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['labprint'].'<br></b></span>
+                                <span style="font-size: '.$font_size_principal*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['price'].'</b></span>';
+                        /******
+                         * 
+                         * 
+                         * 
+                         */
+                    }else{
+                        foreach($tickets[(($i*2)-1)+$j]['prices'] as $price){
+                            $x = sizeof($price);
+                            $ultimo = sizeof($price);
+                            $contador=$contador+1;
+                            if(sizeof($price)==2){
+                                $mult = 1.2;
+                            }
+                            if($contador == $ultimo){
+                                $precio.= $price['labprint'].'&nbsp;&nbsp;'.$price['price'];
+                                $labprice = '<span style="font-size: '.$font_size_secondary*$mult.'em;"><b>'.$precio.'</b></span>';
+                            }else{
+                                $precio.= $price['labprint'].'&nbsp;&nbsp;'.$price['price'].'<br>';
+                            }
                         }
                     }
                     $columna.= '<th>                    
-                    <span style="font-size: '.$font_size_principal.'em;"><b>'.$tickets[(($i*2)-1)+$j]['scode'].'</b><br></span>
+                    <span style="font-size: '.$font_size_principal.'em;"><b>'.$tickets[(($i*2)-1)+$j]['scode'].$tool.'</b><br></span>
                     <span style="font-size: '.$font_size_aux.'em;">'.$tickets[(($i*2)-1)+$j]['item'].'<br></span>
-                    <span style="font-size: '.$font_size_secondary*$mult.'em;"><b>'.$precio.'</b></span>
+                    '.$labprice.$ayuda.'
                 </th>';
                 }else{
                     $columna.='<th></th>';
@@ -130,8 +157,16 @@ class PdfController extends Controller{
             $columna='';
             for($j=1; $j<3; $j++){
                 if((($i*2)-1)+$j<sizeof($tickets)){
+                    $tool = $tickets[(($i*2)-1)+$j]['tool'];
+                    if(strlen($tool)>0){
+                        $font_size_principal = 3.2;
+                        $tool = '+'.$tickets[(($i*2)-1)+$j]['tool'];
+                    }else{
+                        $tool = '';
+                        $font_size_principal = 3.8;
+                    }
                     $columna.= '<th>                    
-                        <span style="font-size: '.$font_size_principal*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['scode'].'</b><br></span>
+                        <span style="font-size: '.$font_size_principal*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['scode'].$tool.'</b><br></span>
                         <span style="font-size: '.$font_size_aux*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['item'].' </b><br></span>
                         <span style="font-size: '.$font_size_aux*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['labprint'].'<br></b></span>
                         <span style="font-size: '.$font_size_principal*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['price'].'</b><br></span>
@@ -144,7 +179,7 @@ class PdfController extends Controller{
             </table>';
             PDF::SetFont($font, '', 12);
             //PDF::writeHTMLCell(206, 66.75, 2, 2, $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=true);
-            PDF::writeHTMLCell($witdh_page, $height_page/4, 5, 20+(($height_page/4)*$i), $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=false);
+            PDF::writeHTMLCell($witdh_page, $height_page/4, 5, 18+(($height_page/4)*$i), $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=false);
         }
      }
     public function setStar($num){
