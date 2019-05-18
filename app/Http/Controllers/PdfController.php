@@ -92,8 +92,8 @@ class PdfController extends Controller{
                 if((($i*2)-1)+$j<sizeof($tickets)){
                     $tool = $tickets[(($i*2)-1)+$j]['tool'];
                     if(strlen($tool)>0){
-                        $font_size_principal = 3.2;
-                        $tool = '+'.$tickets[(($i*2)-1)+$j]['tool'];
+                        $font_size_principal = 3.0;
+                        $tool = '-'.$tickets[(($i*2)-1)+$j]['tool'];
                     }else{
                         $tool = '';
                         $font_size_principal = 4;
@@ -159,8 +159,8 @@ class PdfController extends Controller{
                 if((($i*2)-1)+$j<sizeof($tickets)){
                     $tool = $tickets[(($i*2)-1)+$j]['tool'];
                     if(strlen($tool)>0){
-                        $font_size_principal = 3.2;
-                        $tool = '+'.$tickets[(($i*2)-1)+$j]['tool'];
+                        $font_size_principal = 3;
+                        $tool = '-'.$tickets[(($i*2)-1)+$j]['tool'];
                     }else{
                         $tool = '';
                         $font_size_principal = 3.8;
