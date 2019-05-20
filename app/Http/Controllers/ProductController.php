@@ -71,16 +71,21 @@ class ProductController extends BaseController{
             }else if($type=='my'){
                 array_push($precios, array("idlist" => null, "labprint" => "MAYOREO", "price" => "$ ".$mayoreo));
             }else{
+                $precio_mayoreo = [];
                 foreach ($request->price_id as $price) {
                     if($price==$priceList->original[0]->lp_id){
                         array_push($precios, array("idlist" => $priceList->original[0]->lp_id, "labprint" => $priceList->original[0]->lp_desc, "price" => "$ ".$menudeo));//linea modificada por lalo
                     }else if($price==$priceList->original[1]->lp_id){
-                        array_push($precios, array("idlist" => $priceList->original[1]->lp_id, "labprint" => $priceList->original[1]->lp_desc, "price" => "$ ".$mayoreo));//linea modificada por lalo
+                        array_push($precio_mayoreo, array("idlist" => $priceList->original[1]->lp_id, "labprint" => $priceList->original[1]->lp_desc, "price" => "$ ".$mayoreo));
+                        //array_push($precios, array("idlist" => $priceList->original[1]->lp_id, "labprint" => $priceList->original[1]->lp_desc, "price" => "$ ".$mayoreo));//linea modificada por lalo
                     }else if($price==$priceList->original[2]->lp_id){
                         array_push($precios, array("idlist" => $priceList->original[2]->lp_id, "labprint" => $priceList->original[2]->lp_desc, "price" => "$ ".$media));
                     }else if($price==$priceList->original[3]->lp_id){
                         array_push($precios, array("idlist" => $priceList->original[3]->lp_id, "labprint" => $priceList->original[3]->lp_desc, "price" => "$ ".$caja));
                     }
+                }
+                if(sizeof($precio_mayoreo)>0){
+                    array_push($precios, $precio_mayoreo[0]);
                 }
             }
             return response()->json([

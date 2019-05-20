@@ -52,7 +52,7 @@ class PdfController extends Controller{
             PDF::writeHTMLCell($witdh_page, 15, 5, 5, $title, $border=0, $ln=0, $fill=0, $reseth=true, $align='center', $autopadding=false);
             $ticket_por_imprimir = array_slice($std, ($i*8), 8);
             $this->setStar(sizeof($ticket_por_imprimir));
-            $this->maquetaTickets($ticket_por_imprimir);
+            $this->maquetaTickets($ticket_por_imprimir, $isPack);
             $hojas_off = $num_hoja;
         }
 
@@ -66,7 +66,7 @@ class PdfController extends Controller{
             PDF::writeHTMLCell($witdh_page, 15, 5, 5, $title, $border=0, $ln=0, $fill=0, $reseth=true, $align='center', $autopadding=false);
             $ticket_por_imprimir = array_slice($off, ($i*8), 8);
             $this->setStar(sizeof($ticket_por_imprimir));
-            $this->maquetaTicketsOferta($ticket_por_imprimir);
+            $this->maquetaTicketsOferta($ticket_por_imprimir, $isPack);
             $hojas_std = $num_hoja;
         }
         
@@ -75,13 +75,80 @@ class PdfController extends Controller{
         PDF::Output(__DIR__.'/../../../files/'.$nameFile, 'F');
         return response()->json(["archivo" => $nameFile, "off" => $hojas_off, "std"=> $hojas_std]);
     }
-     public function maquetaTickets($tickets){
+
+    public function pdfBodega($ticket, $isPack){
+        $witdh_page = 200;
+        $height_page = 250;
+        $font = 'helvetica';
+
+        for($i=0; $i<sizeof($ticket)/16; $i++){
+            // add a page
+            PDF::AddPage();
+            $color = "Página ";
+            $num_hoja = $i+1;
+            $title = "<span style='font-size: 40px;'>".$color." (".$num_hoja.")</span>";
+            PDF::SetFont($font, '', 35);
+            PDF::writeHTMLCell($witdh_page, 15, 5, 5, $title, $border=0, $ln=0, $fill=0, $reseth=true, $align='center', $autopadding=false);
+            $ticket_por_imprimir = array_slice($ticket, ($i*16), 16);
+            $this->maquetaTickets_bodega($ticket_por_imprimir, $isPack);
+            $hojas = $num_hoja;
+        }
+
+        $nameFile = time().'.pdf';
+
+        PDF::Output(__DIR__.'/../../../files/'.$nameFile, 'F');
+        return response()->json(["archivo" => $nameFile, "hojas" => $hojas]);
+    }
+
+    public function drawBottomLine($cantidad){
+        $witdh_page = 200;
+        $height_page = 250;
+        $linea_horizontal = '<span style="border:solid black 5px; height: '.$height_page.'; widtth:'.$witdh_page.';"></span>';
+        PDF::writeHTMLCell($witdh_page/2, (($height_page/8)*$cantidad)+15, 5, "", $linea_horizontal, $border='R', $ln=0, $fill=0, $reseth=true, $align='center', $autopadding=false);
+        for($i=0; $i<$cantidad; $i++){
+            PDF::writeHTMLCell($witdh_page, $height_page/8, 5, 21+(($height_page/8)*$i), $linea_horizontal, $border='B', $ln=0, $fill=0, $reseth=true, $align='center', $autopadding=false);
+        }
+    }
+    public function maquetaTickets_bodega($tickets, $isPack){
+        $font = 'helvetica';
+        $font_size_principal = 3.2;
+        $font_size_secondary = 1.8;
+        $font_size_aux = 1.8;
+        $witdh_page = 200;
+        $height_page = 250;
+        $this->drawBottomLine(sizeof($tickets)/2);
+        for($i=0; $i<(sizeof($tickets)/2); $i++){
+            $html ='<table border="0" style="text-align:center;">
+            <tr>';
+            $columna='';
+            for($j=1; $j<3; $j++){
+                if((($i*2)-1)+$j<sizeof($tickets)){
+                    $pz = ($isPack ? ' '.$tickets[(($i*2)-1)+$j]['ipack'].'pz':'');
+                    if(strlen($tickets[(($i*2)-1)+$j]['item'])>8){
+                        $font_size_principal = 2.8;
+                    }
+                    $columna.= '<th>                    
+                        <span style="font-size: '.$font_size_principal*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['item'].' </b></span><br>
+                        <span style="font-size: '.$font_size_aux*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['scode'].$pz.'</b></span><br>
+                    </th>';
+                }else {
+                    $columna.='<th></th>';
+                }
+            }
+            $html.= $columna.'</tr>
+        </table>';
+        PDF::SetFont($font, '', 12);
+        PDF::writeHTMLCell($witdh_page, $height_page/8, 5, 21+(($height_page/8)*$i), $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=false);
+        }
+
+    }
+     public function maquetaTickets($tickets, $isPack){
         $witdh_page = 200;
         $height_page = 250;
         $font = 'helvetica';
         $font_size_principal = 3.8;
         $font_size_secondary = 1.8;
-        $font_size_aux = 1.1;
+        $font_size_aux = 1.2;
         for($i=0; $i<(sizeof($tickets))/2; $i++){
             $html ='<table border="0" style="text-align:center;">
             <tr>';
@@ -90,13 +157,17 @@ class PdfController extends Controller{
                 $mult = 1;
                 $precio = '';
                 if((($i*2)-1)+$j<sizeof($tickets)){
+                    $pz = ($isPack ? ' '.$tickets[(($i*2)-1)+$j]['ipack'].'pz':'');
                     $tool = $tickets[(($i*2)-1)+$j]['tool'];
-                    if(strlen($tool)>0){
-                        $font_size_principal = 3.0;
+                    if(strlen($tool)==1){
+                        $font_size_principal = 3;
+                        $tool = '-'.$tickets[(($i*2)-1)+$j]['tool'];
+                    }else if(strlen($tool)==2){
+                        $font_size_principal = 2.8;
                         $tool = '-'.$tickets[(($i*2)-1)+$j]['tool'];
                     }else{
                         $tool = '';
-                        $font_size_principal = 4;
+                        $font_size_principal = 3.8;
                     }
                     $contador = 0;
                     $labprice = '';
@@ -104,20 +175,14 @@ class PdfController extends Controller{
                     $x = 0;
                     if(sizeof($tickets[(($i*2)-1)+$j]['prices'])==1){
                         $ayuda.= '<span style="font-size: '.$font_size_aux*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['labprint'].'<br></b></span>
-                                <span style="font-size: '.$font_size_principal*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['price'].'</b></span>';
-                        /******
-                         * 
-                         * 
-                         * 
-                         */
+                                <span style="font-size: 4.5em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['price'].'</b></span>';
+                    }else if(sizeof($tickets[(($i*2)-1)+$j]['prices'])==2){
+                        $mult = 1.2;
+                        $labprice = '<span style="font-size: '.$font_size_secondary*$mult.'em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['labprint'].'&nbsp;&nbsp;'.$tickets[(($i*2)-1)+$j]['prices'][0]['price'].'<br>'.$tickets[(($i*2)-1)+$j]['prices'][1]['labprint'].'&nbsp;&nbsp;'.$tickets[(($i*2)-1)+$j]['prices'][1]['price'].'</b></span>';
                     }else{
                         foreach($tickets[(($i*2)-1)+$j]['prices'] as $price){
-                            $x = sizeof($price);
                             $ultimo = sizeof($price);
                             $contador=$contador+1;
-                            if(sizeof($price)==2){
-                                $mult = 1.2;
-                            }
                             if($contador == $ultimo){
                                 $precio.= $price['labprint'].'&nbsp;&nbsp;'.$price['price'];
                                 $labprice = '<span style="font-size: '.$font_size_secondary*$mult.'em;"><b>'.$precio.'</b></span>';
@@ -128,7 +193,7 @@ class PdfController extends Controller{
                     }
                     $columna.= '<th>                    
                     <span style="font-size: '.$font_size_principal.'em;"><b>'.$tickets[(($i*2)-1)+$j]['scode'].$tool.'</b><br></span>
-                    <span style="font-size: '.$font_size_aux.'em;">'.$tickets[(($i*2)-1)+$j]['item'].'<br></span>
+                    <span style="font-size: '.$font_size_aux.'em;"><b>'.$tickets[(($i*2)-1)+$j]['item'].$pz.'</b><br></span>
                     '.$labprice.$ayuda.'
                 </th>';
                 }else{
@@ -140,15 +205,15 @@ class PdfController extends Controller{
             </table>';
             PDF::SetFont($font, '', 12);
             //PDF::writeHTMLCell(206, 66.75, 2, 2, $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=true);
-            PDF::writeHTMLCell($witdh_page, $height_page/4, 5, 22+(($height_page/4)*$i), $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=false);
+            PDF::writeHTMLCell($witdh_page, $height_page/4, 5, 21+(($height_page/4)*$i), $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=false);
         }
      }
 
-     public function maquetaTicketsOferta($tickets){
+     public function maquetaTicketsOferta($tickets, $isPack){
         $witdh_page = 200;
         $height_page = 250;
         $font = 'helvetica';
-        $font_size_principal = 3.8;
+        $font_size_principal = 3.6;
         $font_size_secondary = 1.9;
         $font_size_aux = 1.2;
         for($i=0; $i<(sizeof($tickets))/2; $i++){
@@ -157,19 +222,23 @@ class PdfController extends Controller{
             $columna='';
             for($j=1; $j<3; $j++){
                 if((($i*2)-1)+$j<sizeof($tickets)){
+                    $pz = ($isPack ? ' '.$tickets[(($i*2)-1)+$j]['ipack'].'pz':'');
                     $tool = $tickets[(($i*2)-1)+$j]['tool'];
-                    if(strlen($tool)>0){
+                    if(strlen($tool)==1){
                         $font_size_principal = 3;
+                        $tool = '-'.$tickets[(($i*2)-1)+$j]['tool'];
+                    }else if(strlen($tool)==2){
+                        $font_size_principal = 2.6;
                         $tool = '-'.$tickets[(($i*2)-1)+$j]['tool'];
                     }else{
                         $tool = '';
-                        $font_size_principal = 3.8;
+                        $font_size_principal = 3.6;
                     }
                     $columna.= '<th>                    
                         <span style="font-size: '.$font_size_principal*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['scode'].$tool.'</b><br></span>
-                        <span style="font-size: '.$font_size_aux*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['item'].' </b><br></span>
+                        <span style="font-size: '.$font_size_aux*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['item'].$pz.'<br></b></span>
                         <span style="font-size: '.$font_size_aux*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['labprint'].'<br></b></span>
-                        <span style="font-size: '.$font_size_principal*1.1.'em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['price'].'</b><br></span>
+                        <span style="font-size: 4.5em;"><b>'.$tickets[(($i*2)-1)+$j]['prices'][0]['price'].'</b></span>
                     </th>';
                 }else{
                     $columna.='<th></th>';
@@ -179,7 +248,7 @@ class PdfController extends Controller{
             </table>';
             PDF::SetFont($font, '', 12);
             //PDF::writeHTMLCell(206, 66.75, 2, 2, $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=true);
-            PDF::writeHTMLCell($witdh_page, $height_page/4, 5, 18+(($height_page/4)*$i), $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=false);
+            PDF::writeHTMLCell($witdh_page, $height_page/4, 5, 21+(($height_page/4)*$i), $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='center', $autopadding=false);
         }
      }
     public function setStar($num){
